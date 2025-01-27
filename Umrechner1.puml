@@ -1,0 +1,11 @@
+@startuml
+class Umrechner {
+    - factorsLength : LinkedHashMap<String, Double>
+    - factorsWeight : LinkedHashMap<String, Double>
+    --
+    + main(args: String[]) : void
+    - page0() : JPanel
+    - page1() : JPanel
+    - convert(value: double, fromUnit: String, toUnit: String) : double
+}
+@enduml

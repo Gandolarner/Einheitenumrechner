@@ -1,0 +1,12 @@
+@startuml
+
+class Umrechner {
+    - factorsLength: LinkedHashMap<String, Double>
+    - factorsWeight: LinkedHashMap<String, Double>
+    + main(args: String[]): void
+    - convert(): double
+    - pageLength(): panel
+    - pageWeight(): panel
+}
+
+@enduml

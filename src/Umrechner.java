@@ -3,8 +3,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 
 public class Umrechner {
@@ -20,26 +18,28 @@ public class Umrechner {
         factorsLength.put("Mikrometer", 1000000.0);
         factorsLength.put("Nanometer", 1000000000.0);
         factorsLength.put("Yard", 1.09361);
-        factorsLength.put("Fuß", 3.28084);
+        factorsLength.put("Fuß",  3.28084);
         factorsLength.put("Zoll", 39.3701);
         factorsLength.put("Seemeilen", 0.0005399568);
         factorsLength.put("Giraffenzungen", 2.1053);
         factorsLength.put("Lichtjahre", 0.0000000000000001057);
         factorsLength.put("Fußballfelder", 0.009524);
-        // zum Hinzufügen neuer Einheiten kopieren und Einheitenname sowie Faktor ersetzen: factorslength.put("Meter", 1.0);
-        factorsWeight.put("Kilogramm", 1000.0);
-        factorsWeight.put("Gramm", 1.0);
-        factorsWeight.put("Milligramm", 0.001);
-        factorsWeight.put("Mikrogramm", 0.000001);
-        factorsWeight.put("Tonnen", 1000000.0);
-        factorsWeight.put("Pfund", 500.0);
-        factorsWeight.put("Pfund-USA", 453.0);
-        factorsWeight.put("Karat", 0.2);
-        factorsWeight.put("Unzen", 28.35);
-        factorsWeight.put("Menschenbabys", 3240.0);
-        factorsWeight.put("Elefantenbabys", 95000.0);
-        factorsWeight.put("Goldbarren", 12400.0);
-        // zum Hinzufügen neuer Einheiten kopieren und Einheitenname sowie Faktor ersetzen: factorsWeight.put("Meter", 1.0);
+        // zum Hinzufügen neuer Einheiten kopieren und Einheitenname sowie Faktor ersetzen:
+        // factorsLength.put("Meter", 1.0);
+        factorsWeight.put("Kilogramm", 1.0);
+        factorsWeight.put("Gramm", 1000.0);
+        factorsWeight.put("Milligramm", 1000000.0);
+        factorsWeight.put("Mikrogramm", 1000000000.0);
+        factorsWeight.put("Tonnen", 0.001);
+        factorsWeight.put("Pfund", 2.0);
+        factorsWeight.put("Pfund-USA", 2.2);
+        factorsWeight.put("Karat", 5000.0);
+        factorsWeight.put("Unzen", 35.274);
+        factorsWeight.put("Menschenbabys", 3.240);
+        factorsWeight.put("Elefantenbabys", 95.000);
+        factorsWeight.put("Goldbarren", 12.400);
+        // zum Hinzufügen neuer Einheiten kopieren und Einheitenname sowie Faktor ersetzen:
+        // factorsWeight.put("Meter", 1.0);
     }
 
     public static void main(String[] args) {
@@ -47,24 +47,23 @@ public class Umrechner {
         JFrame frame = new JFrame("Einheiten-Umrechner");
         // Programm wird gestoppt beim Schließen des Fensters
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Fenster(mindest)größe festlegen
+        // Fenster(-mindest-)größe festlegen
         frame.setMinimumSize(new Dimension(400, 350));
         // Fensterposition in der Mitte des Bildschirms
         frame.setLocationRelativeTo(null);
-
-        // Registerkarten erstellen
+        // Register erstellen
         JTabbedPane tabbedPane = new JTabbedPane();
         // Registerkarte Länge
-        JPanel pageLength = new JPanel();
-        pageLength.add(new JLabel("Länge"));
+        JPanel page0 = new JPanel();
+        page0.add(new JLabel("Länge"));
         tabbedPane.addTab("Länge", pageLength());
         // Registerkarte Gewicht
-        JPanel pageWeight = new JPanel();
-        pageWeight.add(new JLabel("Gewicht"));
+        JPanel page1 = new JPanel();
+        page1.add(new JLabel("Gewicht"));
         tabbedPane.addTab("Gewicht", pageWeight());
         //Register am unteren Fensterrand
         tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
-
+        // Registerkarten zum Fenster hinzufügen
         frame.add(tabbedPane);
         // Fenster sichtbar machen
         frame.setVisible(true);
@@ -75,10 +74,11 @@ public class Umrechner {
     private static JPanel pageLength() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Rand hinzufügen
+        // Rand hinzufügen
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel inputLabel = new JLabel("Eingabewert:");
-        //inputLabel.setBounds();
+
         JTextField inputField = new JTextField();
 
         JLabel fromUnitLabel = new JLabel("Von (Einheit):");
@@ -92,20 +92,43 @@ public class Umrechner {
         resultField.setEditable(false);
 
         JButton convertButton = new JButton("Umrechnen");
-        convertButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    double inputValue = Double.parseDouble(inputField.getText());
-                    String fromUnit = (String) fromUnitCombo.getSelectedItem();
-                    String toUnit = (String) toUnitCombo.getSelectedItem();
+        convertButton.addActionListener(_ -> {
+            try {
+                String inputText = inputField.getText().replace(',', '.');
+                double inputValue = Double.parseDouble(inputText);
 
-                    double result = convert(inputValue, fromUnit, toUnit);
-                    resultField.setText(String.format("%.5f", result));
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(panel, "Bitte eine gültige Zahl eingeben!", "Fehler", JOptionPane.ERROR_MESSAGE);
+                if (inputValue <= 0){
+                    throw new IllegalArgumentException("Bitte gib eine positive Zahl ein!");
+                }
+                String fromUnit = (String) fromUnitCombo.getSelectedItem();
+                String toUnit = (String) toUnitCombo.getSelectedItem();
+
+                double result = convert(inputValue, fromUnit, toUnit);
+                // Auf 3 Nachkommastellen formatieren
+                String formatted = String.format("%.3f", result);
+                // Entferne endständige Nullen
+                formatted = formatted.replaceAll("0*$", "");
+                // Entferne das Komma, falls keine Dezimalstellen übrig sind
+                formatted = formatted.replaceAll(",$", "");
+                // Unterscheidung ob 1 oder !1 die Ausgangsmenge ist
+                if (inputValue == 1) {
+                    resultField.setText(inputText + " " + fromUnit + " ist gleich " + formatted + " " + toUnit);
+                } else {
+                    resultField.setText(inputText + " " + fromUnit + " sind gleich" + formatted + " " + toUnit);
                 }
             }
+                catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel, "Bitte gib eine gültige Zahl ein!", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+                catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(panel, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+        });
+        // Eingabefelder auf Knopfdruck leeren
+        JButton clearButton = new JButton("Neue Eingabe");
+        clearButton.addActionListener(_ -> {
+            inputField.setText("");
+            resultField.setText("");
         });
 
         panel.add(inputLabel);
@@ -117,16 +140,18 @@ public class Umrechner {
         panel.add(convertButton);
         panel.add(resultLabel);
         panel.add(resultField);
-
+        panel.add(clearButton);
+        // Rückgabewert der Methode
         return panel;
     }
     // Panel für Gewichtsumrechnung
     private static JPanel pageWeight() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Rand hinzufügen
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel inputLabel = new JLabel("Eingabewert:");
+
         JTextField inputField = new JTextField();
 
         JLabel fromUnitLabel = new JLabel("Von (Einheit):");
@@ -140,17 +165,39 @@ public class Umrechner {
         resultField.setEditable(false);
 
         JButton convertButton = new JButton("Umrechnen");
-        convertButton.addActionListener(e -> {
+        convertButton.addActionListener(_ -> {
             try {
-                double inputValue = Double.parseDouble(inputField.getText());
+                String inputText = inputField.getText().replace(',', '.');
+                double inputValue = Double.parseDouble(inputText);
+
+                if (inputValue <= 0){
+                    throw new IllegalArgumentException("Bitte gib eine positive Zahl ein!");
+                }
                 String fromUnit = (String) fromUnitCombo.getSelectedItem();
                 String toUnit = (String) toUnitCombo.getSelectedItem();
 
                 double result = convert(inputValue, fromUnit, toUnit);
-                resultField.setText(String.format("%.5f", result));
+                String formatted = String.format("%.3f", result);
+                formatted = formatted.replaceAll("0*$", "");
+                formatted = formatted.replaceAll(",$", "");
+                if (inputValue == 1) {
+                    resultField.setText(inputText + " " + fromUnit + " ist gleich " + formatted + " " + toUnit);
+                } else {
+                    resultField.setText(inputText + " " + fromUnit + " sind gleich" + formatted + " " + toUnit);
+                }
+
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(panel, "Bitte eine gültige Zahl eingeben!", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(panel, "Bitte gib eine gültige Zahl ein!", "Fehler",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(panel, ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
             }
+        });
+
+        JButton clearButton = new JButton("Neue Eingabe");
+        clearButton.addActionListener(_ -> {
+            inputField.setText("");
+            resultField.setText("");
         });
 
         panel.add(inputLabel);
@@ -162,6 +209,7 @@ public class Umrechner {
         panel.add(convertButton);
         panel.add(resultLabel);
         panel.add(resultField);
+        panel.add(clearButton);
 
         return panel;
     }
@@ -183,4 +231,3 @@ public class Umrechner {
         return value * (toFactor / fromFactor);
     }
 }
-

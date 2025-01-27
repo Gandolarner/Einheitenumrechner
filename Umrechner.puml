@@ -1,0 +1,53 @@
+@startuml
+
+' Klassen und ihre Attribute
+class Umrechner {
+    - static final LinkedHashMap<String, Double> factorsLength
+    - static final LinkedHashMap<String, Double> factorsWeight
+    + main(String[] args)
+    + page0() : JPanel
+    + page1() : JPanel
+    + convert(double value, String fromUnit, String toUnit) : double
+}
+
+class JPanel {
+    + setLayout(LayoutManager) : void
+    + add(Component) : void
+    + setBorder(Border) : void
+}
+
+class JTextField {
+    + setEditable(boolean) : void
+}
+
+class JComboBox {
+    + JComboBox(Object[]) : void
+}
+
+class JButton {
+    + addActionListener(ActionListener) : void
+}
+
+class ActionListener {
+    + actionPerformed(ActionEvent) : void
+}
+
+class JLabel {
+    + JLabel(String) : void
+}
+
+class JOptionPane {
+    + showMessageDialog(Component, Object, String, int) : void
+}
+
+' Beziehungen zwischen Klassen
+Umrechner -> JPanel : erstellt
+Umrechner -> JTextField : verwendet
+Umrechner -> JComboBox : verwendet
+Umrechner -> JButton : verwendet
+Umrechner -> JLabel : verwendet
+Umrechner -> JOptionPane : verwendet
+JButton --> ActionListener : trigger
+Umrechner -> LinkedHashMap : speichert Umrechnungsfaktoren
+
+@enduml
